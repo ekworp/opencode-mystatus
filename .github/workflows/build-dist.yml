@@ -33,7 +33,7 @@ jobs:
           version: 10
 
       - name: Install dependencies
-        run: pnpm install --config.minimumReleaseAge=0 --ignore-scripts
+        run: pnpm install --ignore-scripts
 
       - name: Typecheck
         run: pnpm run typecheck
