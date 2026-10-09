@@ -208,7 +208,7 @@ export async function queryOpenAIUsage(
   authData: OpenAIAuthData | undefined,
 ): Promise<QueryResult | null> {
   // 检查账号是否存在且有效
-  if (!authData || authData.type !== "oauth" || !authData.access) {
+  if (authData?.type !== "oauth" || !authData.access) {
     return null;
   }
 

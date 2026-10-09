@@ -219,6 +219,8 @@ pnpm run lint
 pnpm run build
 ```
 
+Git hook 会在提交前自动执行 lint 与类型检查，执行 `pnpm install` 时由 Husky 自动安装。
+
 ## 许可证
 
 MIT

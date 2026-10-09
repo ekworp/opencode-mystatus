@@ -68,7 +68,7 @@ export function calcRemainPercent(usedPercent: number): number {
  * 格式化 Token 数量（以百万为单位）
  */
 export function formatTokens(tokens: number): string {
-  return (tokens / 1000000).toFixed(1) + "M";
+  return `${(tokens / 1000000).toFixed(1)}M`;
 }
 
 // ============================================================================

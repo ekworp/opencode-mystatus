@@ -7,10 +7,10 @@
  * [同步]: lib/openai.ts, lib/zhipu.ts, lib/google.ts, lib/types.ts, lib/i18n.ts
  */
 
+import { readFile } from "node:fs/promises";
+import { homedir } from "node:os";
+import { join } from "node:path";
 import { Plugin } from "@opencode/plugin";
-import { readFile } from "fs/promises";
-import { homedir } from "os";
-import { join } from "path";
 import { queryCopilotUsage } from "./lib/copilot";
 import { queryGoogleUsage } from "./lib/google";
 import { t } from "./lib/i18n";

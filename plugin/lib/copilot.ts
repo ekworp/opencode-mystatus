@@ -11,9 +11,9 @@
  * before calling the internal quota API.
  */
 
-import * as fs from "fs";
-import * as os from "os";
-import * as path from "path";
+import * as fs from "node:fs";
+import * as os from "node:os";
+import * as path from "node:path";
 import { t } from "./i18n";
 import type {
   CopilotAuthData,
@@ -299,7 +299,7 @@ async function fetchCopilotUsage(
   // The new OpenCode partnership uses a different OAuth client that doesn't grant
   // access to the /copilot_internal/* endpoints
   throw new Error(
-    t.copilotQuotaUnavailable + "\n\n" + t.copilotQuotaWorkaround,
+    `${t.copilotQuotaUnavailable}\n\n${t.copilotQuotaWorkaround}`,
   );
 }
 
@@ -501,7 +501,7 @@ export async function queryCopilotUsage(
 
   // Strategy 2: Try internal API with OAuth token (legacy, may not work with new OpenCode auth)
   // Check if account exists and has a refresh token (the GitHub OAuth token)
-  if (!authData || authData.type !== "oauth" || !authData.refresh) {
+  if (authData?.type !== "oauth" || !authData.refresh) {
     // No Copilot account is configured. Do not query GitHub or report an
     // error for platforms the user has not enabled.
     return null;

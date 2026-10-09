@@ -187,7 +187,7 @@ async function queryUsage(
   config: PlatformConfig,
 ): Promise<QueryResult | null> {
   // 检查账号是否存在且有效
-  if (!authData || authData.type !== "api" || !authData.key) {
+  if (authData?.type !== "api" || !authData.key) {
     return null;
   }
 

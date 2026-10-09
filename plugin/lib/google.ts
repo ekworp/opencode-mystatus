@@ -7,9 +7,9 @@
  * [同步]: mystatus.ts, types.ts, utils.ts, i18n.ts
  */
 
-import { readFile } from "fs/promises";
-import { homedir } from "os";
-import { join } from "path";
+import { readFile } from "node:fs/promises";
+import { homedir } from "node:os";
+import { join } from "node:path";
 
 import { currentLang, t } from "./i18n";
 import {

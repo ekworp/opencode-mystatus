@@ -220,6 +220,9 @@ pnpm run lint
 pnpm run build
 ```
 
+Git hooks run the lint and typecheck automatically before commits.
+They are installed by `pnpm install` through Husky.
+
 ## License
 
 MIT
