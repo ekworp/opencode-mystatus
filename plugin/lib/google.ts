@@ -11,12 +11,12 @@ import { readFile } from "fs/promises";
 import { homedir } from "os";
 import { join } from "path";
 
-import { t, currentLang } from "./i18n";
+import { currentLang, t } from "./i18n";
 import {
-  type QueryResult,
   type AntigravityAccount,
   type AntigravityAccountsFile,
   HIGH_USAGE_THRESHOLD,
+  type QueryResult,
 } from "./types";
 import { createProgressBar, fetchWithTimeout, safeMax } from "./utils";
 
@@ -215,9 +215,7 @@ async function fetchGoogleUsage(
 /**
  * 查询单个账号的额度
  */
-async function fetchAccountQuota(
-  account: AntigravityAccount,
-): Promise<{
+async function fetchAccountQuota(account: AntigravityAccount): Promise<{
   success: boolean;
   models?: ModelQuota[];
   maxUsage?: number;

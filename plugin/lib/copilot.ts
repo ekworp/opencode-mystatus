@@ -11,17 +11,17 @@
  * before calling the internal quota API.
  */
 
+import * as fs from "fs";
+import * as os from "os";
+import * as path from "path";
 import { t } from "./i18n";
-import {
-  type QueryResult,
-  type CopilotAuthData,
-  type CopilotQuotaConfig,
-  type CopilotTier,
+import type {
+  CopilotAuthData,
+  CopilotQuotaConfig,
+  CopilotTier,
+  QueryResult,
 } from "./types";
 import { createProgressBar, fetchWithTimeout } from "./utils";
-import * as fs from "fs";
-import * as path from "path";
-import * as os from "os";
 
 // ============================================================================
 // Type Definitions

@@ -1,7 +1,7 @@
 # opencode-mystatus
 
-[![npm version](https://img.shields.io/npm/v/opencode-mystatus.svg)](https://www.npmjs.com/package/opencode-mystatus)
-[![npm downloads](https://img.shields.io/npm/dt/opencode-mystatus)](https://www.npmjs.com/package/opencode-mystatus)
+[![npm version](https://img.shields.io/npm/v/%40ekworp%2Fopencode-mystatus.svg)](https://www.npmjs.com/package/@ekworp/opencode-mystatus)
+[![npm downloads](https://img.shields.io/npm/dm/%40ekworp%2Fopencode-mystatus)](https://www.npmjs.com/package/@ekworp/opencode-mystatus)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 An [OpenCode](https://opencode.ai) plugin to query account quota usage for multiple AI platforms.
@@ -35,23 +35,18 @@ Install the opencode-mystatus plugin by following: https://raw.githubusercontent
 
 To install this plugin, perform these steps:
 
-1. Add `"opencode-mystatus"` to the `plugin` array in `~/.config/opencode/opencode.json`
-
-2. Add the slash command to the `command` object in the same file:
+1. Add `"@ekworp/opencode-mystatus"` to the `plugins` array in `~/.config/opencode/opencode.json`:
 
 ```json
 {
-  "plugin": ["opencode-mystatus"],
-  "command": {
-    "mystatus": {
-      "description": "Query quota usage for all AI accounts",
-      "template": "Use the mystatus tool to query quota usage. Return the result as-is without modification."
-    }
-  }
+  "$schema": "https://opencode.ai/config.json",
+  "plugins": ["@ekworp/opencode-mystatus"]
 }
 ```
 
-3. Tell the user to restart OpenCode.
+2. Optionally copy `command/mystatus.md` to `~/.config/opencode/commands/` to enable `/mystatus`.
+
+3. Restart OpenCode.
 
 </details>
 
@@ -61,25 +56,33 @@ To install this plugin, perform these steps:
 
 ```json
 {
-  "plugin": ["opencode-mystatus"],
-  "command": {
-    "mystatus": {
-      "description": "Query quota usage for all AI accounts",
-      "template": "Use the mystatus tool to query quota usage. Return the result as-is without modification."
-    }
-  }
+  "$schema": "https://opencode.ai/config.json",
+  "plugins": ["@ekworp/opencode-mystatus"]
 }
 ```
 
-2. Restart OpenCode
+2. Optionally copy `command/mystatus.md` to `~/.config/opencode/commands/` to enable `/mystatus`.
+3. Restart OpenCode
 
 ### From Local Files
 
-Copy the plugin files to your OpenCode config directory:
+Copy the plugin files to your project's OpenCode directory:
 
-1. Copy `plugin/mystatus.ts` and `plugin/lib/` to `~/.config/opencode/plugin/`
-2. Copy `command/mystatus.md` to `~/.config/opencode/command/`
-3. Restart OpenCode
+1. Copy `plugin/mystatus.ts` and `plugin/lib/` to `.opencode/plugins/`
+2. Install the project dependencies with `pnpm install`.
+3. Optionally copy `command/mystatus.md` to `.opencode/commands/` to enable `/mystatus`.
+4. Restart OpenCode
+
+### GitHub Release
+
+Every `v*` tag publishes a single-file V2 plugin build to GitHub Releases:
+
+```text
+https://github.com/ekworp/opencode-mystatus/releases/latest/download/opencode-mystatus.js
+```
+
+Download the file to `.opencode/plugins/mystatus.js` before starting OpenCode. The
+release file still expects OpenCode V2 to provide `@opencode/plugin`.
 
 ## Usage
 
@@ -206,15 +209,15 @@ The plugin displays quota for these models:
 ## Development
 
 ```bash
-# Using npm
-npm install
-npm run typecheck
-npm run build
+# Install dependencies
+pnpm install
 
-# Or using Bun
-bun install
-bun run typecheck
-bun run build
+# Check the code
+pnpm run typecheck
+pnpm run lint
+
+# Build the TypeScript distribution
+pnpm run build
 ```
 
 ## License

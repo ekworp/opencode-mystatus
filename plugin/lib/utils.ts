@@ -5,7 +5,7 @@
  * [同步]: openai.ts, zhipu.ts, google.ts
  */
 
-import { t, currentLang } from "./i18n";
+import { currentLang, t } from "./i18n";
 import { REQUEST_TIMEOUT_MS } from "./types";
 
 // ============================================================================

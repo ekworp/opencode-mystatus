@@ -1,7 +1,7 @@
 # opencode-mystatus
 
-[![npm version](https://img.shields.io/npm/v/opencode-mystatus.svg)](https://www.npmjs.com/package/opencode-mystatus)
-[![npm 总下载量](https://img.shields.io/npm/dt/opencode-mystatus)](https://www.npmjs.com/package/opencode-mystatus)
+[![npm version](https://img.shields.io/npm/v/%40ekworp%2Fopencode-mystatus.svg)](https://www.npmjs.com/package/@ekworp/opencode-mystatus)
+[![npm 总下载量](https://img.shields.io/npm/dm/%40ekworp%2Fopencode-mystatus)](https://www.npmjs.com/package/@ekworp/opencode-mystatus)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 [OpenCode](https://opencode.ai) 插件，用于查询多个 AI 平台的账号额度使用情况。
@@ -35,23 +35,17 @@ Install the opencode-mystatus plugin by following: https://raw.githubusercontent
 
 安装此插件需要执行以下步骤：
 
-1. 在 `~/.config/opencode/opencode.json` 的 `plugin` 数组中添加 `"opencode-mystatus"`
-
-2. 在同一文件的 `command` 对象中添加斜杠命令：
+1. 在 `~/.config/opencode/opencode.json` 的 `plugins` 数组中添加 `"@ekworp/opencode-mystatus"`：
 
 ```json
 {
-  "plugin": ["opencode-mystatus"],
-  "command": {
-    "mystatus": {
-      "description": "Query quota usage for all AI accounts",
-      "template": "Use the mystatus tool to query quota usage. Return the result as-is without modification."
-    }
-  }
+  "$schema": "https://opencode.ai/config.json",
+  "plugins": ["@ekworp/opencode-mystatus"]
 }
 ```
 
-3. 告诉用户重启 OpenCode。
+2. 如需启用 `/mystatus`，将 `command/mystatus.md` 复制到 `~/.config/opencode/commands/`。
+3. 重启 OpenCode。
 
 </details>
 
@@ -61,25 +55,33 @@ Install the opencode-mystatus plugin by following: https://raw.githubusercontent
 
 ```json
 {
-  "plugin": ["opencode-mystatus"],
-  "command": {
-    "mystatus": {
-      "description": "Query quota usage for all AI accounts",
-      "template": "Use the mystatus tool to query quota usage. Return the result as-is without modification."
-    }
-  }
+  "$schema": "https://opencode.ai/config.json",
+  "plugins": ["@ekworp/opencode-mystatus"]
 }
 ```
 
-2. 重启 OpenCode
+2. 如需启用 `/mystatus`，将 `command/mystatus.md` 复制到 `~/.config/opencode/commands/`。
+3. 重启 OpenCode
 
 ### 从本地文件安装
 
 将插件文件复制到 OpenCode 配置目录：
 
-1. 将 `plugin/mystatus.ts` 和 `plugin/lib/` 复制到 `~/.config/opencode/plugin/`
-2. 将 `command/mystatus.md` 复制到 `~/.config/opencode/command/`
-3. 重启 OpenCode
+1. 将 `plugin/mystatus.ts` 和 `plugin/lib/` 复制到项目的 `.opencode/plugins/`
+2. 执行 `pnpm install` 安装依赖。
+3. 如需启用 `/mystatus`，将 `command/mystatus.md` 复制到 `.opencode/commands/`。
+4. 重启 OpenCode
+
+### GitHub Release
+
+每个 `v*` 标签都会在 GitHub Release 中发布单文件 V2 插件：
+
+```text
+https://github.com/ekworp/opencode-mystatus/releases/latest/download/opencode-mystatus.js
+```
+
+启动 OpenCode 前，将文件下载到项目的 `.opencode/plugins/mystatus.js`。
+该文件依赖 OpenCode V2 提供的 `@opencode/plugin`。
 
 ## 使用方法
 
@@ -206,15 +208,15 @@ Claude     2d 9h      ░░░░░░░░░░░░░░░░░░░�
 ## 开发
 
 ```bash
-# 使用 npm
-npm install
-npm run typecheck
-npm run build
+# 安装依赖
+pnpm install
 
-# 或使用 Bun
-bun install
-bun run typecheck
-bun run build
+# 检查代码
+pnpm run typecheck
+pnpm run lint
+
+# 编译 TypeScript
+pnpm run build
 ```
 
 ## 许可证

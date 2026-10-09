@@ -9,18 +9,18 @@
 
 import { t } from "./i18n";
 import {
+  HIGH_USAGE_THRESHOLD,
   type QueryResult,
   type ZhipuAuthData,
-  HIGH_USAGE_THRESHOLD,
 } from "./types";
 import {
-  formatDuration,
-  createProgressBar,
   calcRemainPercent,
-  formatTokens,
+  createProgressBar,
   fetchWithTimeout,
-  safeMax,
+  formatDuration,
+  formatTokens,
   maskString,
+  safeMax,
 } from "./utils";
 
 // ============================================================================

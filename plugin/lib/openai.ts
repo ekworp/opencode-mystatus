@@ -8,12 +8,12 @@
  */
 
 import { t } from "./i18n";
-import { type QueryResult, type OpenAIAuthData } from "./types";
+import type { OpenAIAuthData, QueryResult } from "./types";
 import {
-  formatDuration,
-  createProgressBar,
   calcRemainPercent,
+  createProgressBar,
   fetchWithTimeout,
+  formatDuration,
 } from "./utils";
 
 // ============================================================================

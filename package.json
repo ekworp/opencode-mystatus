@@ -1,6 +1,6 @@
 {
-  "name": "opencode-mystatus",
-  "version": "1.2.4",
+  "name": "@ekworp/opencode-mystatus",
+  "version": "1.2.6",
   "description": "Check all your AI subscription quotas in one command. Supports OpenAI, Zhipu AI, Z.ai, and Google Antigravity. More platforms coming soon.",
   "type": "module",
   "main": "dist/plugin/mystatus.js",
@@ -20,10 +20,11 @@
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "format": "prettier --write .",
-    "prepublishOnly": "npm run lint && npm run build"
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "prepublishOnly": "pnpm run lint && pnpm run build",
+    "publish": "pnpm publish --access public --registry=https://registry.npmjs.org"
   },
   "keywords": [
     "opencode",
@@ -49,20 +50,15 @@
   },
   "homepage": "https://github.com/vbgate/opencode-mystatus#readme",
   "dependencies": {
-    "@opencode-ai/plugin": "1.1.27"
+    "@opencode/plugin": "^2.0.26"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.5.15",
     "@types/node": "^22.0.0",
-    "@typescript-eslint/eslint-plugin": "^8.52.0",
-    "@typescript-eslint/parser": "^8.52.0",
-    "eslint": "^9.39.2",
-    "eslint-config-prettier": "^10.1.8",
-    "globals": "^17.0.0",
-    "prettier": "^3.7.4",
     "typescript": "^5.8.0"
   },
   "peerDependencies": {
-    "@opencode-ai/plugin": "^1.1.0"
+    "@opencode/plugin": "^2.0.0"
   },
   "engines": {
     "node": ">=18.0.0"

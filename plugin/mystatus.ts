@@ -7,29 +7,34 @@
  * [同步]: lib/openai.ts, lib/zhipu.ts, lib/google.ts, lib/types.ts, lib/i18n.ts
  */
 
-import { type Plugin, tool } from "@opencode-ai/plugin";
+import { Plugin } from "@opencode/plugin";
 import { readFile } from "fs/promises";
 import { homedir } from "os";
 import { join } from "path";
-
-import { t } from "./lib/i18n";
-import { type AuthData, type QueryResult } from "./lib/types";
-import { queryOpenAIUsage } from "./lib/openai";
-import { queryZaiUsage, queryZhipuUsage } from "./lib/zhipu";
-import { queryGoogleUsage } from "./lib/google";
 import { queryCopilotUsage } from "./lib/copilot";
+import { queryGoogleUsage } from "./lib/google";
+import { t } from "./lib/i18n";
+import { queryOpenAIUsage } from "./lib/openai";
+import type { AuthData, QueryResult } from "./lib/types";
+import { queryZaiUsage, queryZhipuUsage } from "./lib/zhipu";
 
 // ============================================================================
-// 插件导出（唯一导出，避免其他函数被当作插件加载）
+// V2 插件导出
 // ============================================================================
 
-export const MyStatusPlugin: Plugin = async () => {
-  return {
-    tool: {
-      mystatus: tool({
+export default Plugin.define({
+  id: "opencode-mystatus",
+  async setup(ctx) {
+    await ctx.tool.transform((editor) => {
+      editor.add({
+        name: "mystatus",
         description:
           "Query account quota usage for all configured AI platforms. Returns remaining quota percentages, usage stats, and reset countdowns with visual progress bars. Currently supports OpenAI (ChatGPT/Codex), Zhipu AI, Z.ai, Google Antigravity, and GitHub Copilot.",
-        args: {},
+        input: {
+          type: "object",
+          properties: {},
+          additionalProperties: false,
+        },
         async execute() {
           // 1. 读取 auth.json
           const authPath = join(homedir(), ".local/share/opencode/auth.json");
@@ -39,21 +44,28 @@ export const MyStatusPlugin: Plugin = async () => {
             const content = await readFile(authPath, "utf-8");
             authData = JSON.parse(content);
           } catch (err) {
-            return t.authError(
-              authPath,
-              err instanceof Error ? err.message : String(err),
-            );
+            return {
+              content: t.authError(
+                authPath,
+                err instanceof Error ? err.message : String(err),
+              ),
+            };
           }
 
           // 2. 并行查询所有平台（Google 不依赖 authData）
-          const [openaiResult, zhipuResult, zaiResult, googleResult, copilotResult] =
-            await Promise.all([
-              queryOpenAIUsage(authData.openai),
-              queryZhipuUsage(authData["zhipuai-coding-plan"]),
-              queryZaiUsage(authData["zai-coding-plan"]),
-              queryGoogleUsage(),
-              queryCopilotUsage(authData["github-copilot"]),
-            ]);
+          const [
+            openaiResult,
+            zhipuResult,
+            zaiResult,
+            googleResult,
+            copilotResult,
+          ] = await Promise.all([
+            queryOpenAIUsage(authData.openai),
+            queryZhipuUsage(authData["zhipuai-coding-plan"]),
+            queryZaiUsage(authData["zai-coding-plan"]),
+            queryGoogleUsage(),
+            queryCopilotUsage(authData["github-copilot"]),
+          ]);
 
           // 3. 收集结果
           const results: string[] = [];
@@ -76,7 +88,7 @@ export const MyStatusPlugin: Plugin = async () => {
 
           // 4. 汇总输出
           if (results.length === 0 && errors.length === 0) {
-            return t.noAccounts;
+            return { content: t.noAccounts };
           }
 
           let output = results.join("\n");
@@ -86,12 +98,12 @@ export const MyStatusPlugin: Plugin = async () => {
             output += t.queryFailed + errors.join("\n");
           }
 
-          return output;
+          return { content: output };
         },
-      }),
-    },
-  };
-};
+      });
+    });
+  },
+});
 
 /**
  * 收集查询结果到 results 和 errors 数组
