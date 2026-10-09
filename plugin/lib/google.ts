@@ -301,27 +301,36 @@ function formatAccountQuota(quotaInfo: AccountQuotaInfo): string {
  * 查询所有 Antigravity 账号的额度
  * @returns 查询结果
  */
-export async function queryGoogleUsage(): Promise<QueryResult> {
+export async function queryGoogleUsage(): Promise<QueryResult | null> {
   try {
     // 读取账号文件
-    const content = await readFile(getAntigravityAccountsPath(), "utf-8");
+    const accountsPath = getAntigravityAccountsPath();
+    let content: string;
+    try {
+      content = await readFile(accountsPath, "utf-8");
+    } catch (err) {
+      // No Antigravity configuration means Google is not enabled.
+      if (
+        err &&
+        typeof err === "object" &&
+        "code" in err &&
+        err.code === "ENOENT"
+      ) {
+        return null;
+      }
+      throw err;
+    }
     const file = JSON.parse(content) as AntigravityAccountsFile;
 
     if (!file.accounts || file.accounts.length === 0) {
-      return {
-        success: true,
-        output: t.noQuotaData,
-      };
+      return null;
     }
 
     // 过滤掉没有邮箱的账号
     const validAccounts = file.accounts.filter((account) => account.email);
 
     if (validAccounts.length === 0) {
-      return {
-        success: true,
-        output: t.noQuotaData,
-      };
+      return null;
     }
 
     // 并行查询所有账号

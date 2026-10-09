@@ -1,0 +1,58 @@
+name: Build distribution files
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag, for example v1.2.5"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Typecheck
+        run: pnpm run typecheck
+
+      - name: Build single-file plugin
+        run: |
+          pnpm dlx esbuild@0.25.12 plugin/mystatus.ts \
+            --bundle \
+            --platform=node \
+            --format=esm \
+            --packages=external \
+            --outfile=opencode-mystatus.js
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
+        run: |
+          gh release create "${RELEASE_TAG}" \
+            opencode-mystatus.js \
+            --title "${RELEASE_TAG}" \
+            --generate-notes
