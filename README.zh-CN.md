@@ -28,7 +28,7 @@
 将以下内容粘贴到任意 AI 代理（Claude Code、OpenCode、Cursor 等）：
 
 ```
-Install the opencode-mystatus plugin by following: https://raw.githubusercontent.com/vbgate/opencode-mystatus/main/README.md
+Install the opencode-mystatus plugin by following: https://raw.githubusercontent.com/ekworp/opencode-mystatus/main/README.md
 ```
 
 <details>
