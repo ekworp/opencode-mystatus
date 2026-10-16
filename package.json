@@ -1,6 +1,6 @@
 {
   "name": "@ekworp/opencode-mystatus",
-  "version": "1.2.8",
+  "version": "1.2.9",
   "description": "Check all your AI subscription quotas in one command. Supports OpenAI, Zhipu AI, Z.ai, and Google Antigravity. More platforms coming soon.",
   "type": "module",
   "main": "dist/plugin/mystatus.js",
@@ -52,7 +52,8 @@
   },
   "homepage": "https://github.com/ekworp/opencode-mystatus#readme",
   "dependencies": {
-    "@opencode/plugin": "2.0.25"
+    "@opencode/plugin": "2.0.25",
+    "undici": "^6.29.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.15",

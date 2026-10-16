@@ -169,7 +169,7 @@ async function refreshAccessToken(
     grant_type: "refresh_token",
   });
 
-  const response = await fetch(GOOGLE_TOKEN_REFRESH_URL, {
+  const response = await fetchWithTimeout(GOOGLE_TOKEN_REFRESH_URL, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: params,

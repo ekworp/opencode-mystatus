@@ -22,6 +22,7 @@ import { t } from "./lib/i18n";
 import { queryOpenAIUsage } from "./lib/openai";
 import { readV2AuthData } from "./lib/opencode-auth";
 import type { QueryResult } from "./lib/types";
+import { configureOpenCodeProxy } from "./lib/utils";
 import { queryZaiUsage, queryZhipuUsage } from "./lib/zhipu";
 
 // ============================================================================
@@ -47,7 +48,9 @@ export default Plugin.define({
             homedir(),
             ".local/share/opencode/opencode.db",
           );
-          const disabledProviders = await readMystatusConfig();
+          const config = await readMystatusConfig();
+          const { disabledProviders } = config;
+          configureOpenCodeProxy(config.useOpenCodeProxy);
           const authData = await readV2AuthData(
             databasePath,
             disabledProviders,
@@ -89,22 +92,24 @@ export default Plugin.define({
             copilotResult,
           ] = await Promise.all([
             isProviderEnabled(disabledProviders, "openai")
-              ? queryOpenAIUsage(authData.openai)
+              ? retryQuery(() => queryOpenAIUsage(authData.openai))
               : null,
             isProviderEnabled(disabledProviders, "zhipuai-coding-plan")
-              ? queryZhipuUsage(authData["zhipuai-coding-plan"])
+              ? retryQuery(() =>
+                  queryZhipuUsage(authData["zhipuai-coding-plan"]),
+                )
               : null,
             isProviderEnabled(disabledProviders, "zai-coding-plan")
-              ? queryZaiUsage(authData["zai-coding-plan"])
+              ? retryQuery(() => queryZaiUsage(authData["zai-coding-plan"]))
               : null,
             isProviderEnabled(disabledProviders, "deepseek")
-              ? queryDeepSeekUsage(authData.deepseek)
+              ? retryQuery(() => queryDeepSeekUsage(authData.deepseek))
               : null,
             isProviderEnabled(disabledProviders, "google")
-              ? queryGoogleUsage()
+              ? retryQuery(() => queryGoogleUsage())
               : null,
             isProviderEnabled(disabledProviders, "github-copilot")
-              ? queryCopilotUsage(authData["github-copilot"])
+              ? retryQuery(() => queryCopilotUsage(authData["github-copilot"]))
               : null,
           ]);
 
@@ -169,4 +174,31 @@ function collectResult(
   } else if (result.error) {
     errors.push(result.error);
   }
+}
+
+/** Retry transient provider failures before displaying an error. */
+async function retryQuery(
+  query: () => Promise<QueryResult | null>,
+): Promise<QueryResult | null> {
+  const maxAttempts = 3;
+  let result: QueryResult | null = null;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      result = await query();
+    } catch (err) {
+      result = {
+        success: false,
+        error: err instanceof Error ? err.message : String(err),
+      };
+    }
+
+    // null means the provider is not configured; it should not be retried.
+    if (!result || result.success || attempt === maxAttempts) return result;
+
+    // 500ms, then 1s. Avoid hammering a temporarily unavailable API.
+    await new Promise((resolve) => setTimeout(resolve, attempt * 500));
+  }
+
+  return result;
 }

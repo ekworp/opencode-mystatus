@@ -5,8 +5,16 @@
  * [同步]: openai.ts, zhipu.ts, google.ts
  */
 
+import { Agent, type Dispatcher, EnvHttpProxyAgent } from "undici";
 import { currentLang, t } from "./i18n";
 import { REQUEST_TIMEOUT_MS } from "./types";
+
+let httpDispatcher: Dispatcher = new EnvHttpProxyAgent();
+
+/** Use the proxy environment inherited from the OpenCode service by default. */
+export function configureOpenCodeProxy(enabled: boolean): void {
+  httpDispatcher = enabled ? new EnvHttpProxyAgent() : new Agent();
+}
 
 // ============================================================================
 // 时间格式化
@@ -93,7 +101,8 @@ export async function fetchWithTimeout(
     const response = await fetch(url, {
       ...options,
       signal: controller.signal,
-    });
+      dispatcher: httpDispatcher,
+    } as RequestInit & { dispatcher: Dispatcher });
     return response;
   } catch (err) {
     if (err instanceof Error && err.name === "AbortError") {
