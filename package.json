@@ -25,7 +25,7 @@
     "lint:fix": "biome check --write .",
     "format": "biome format --write .",
     "prepublishOnly": "pnpm run lint && pnpm run build",
-    "publish:npm": "pnpm publish --access public --registry=https://registry.npmjs.org",
+    "publish:npm": "npm publish --access public --registry=https://registry.npmjs.org",
     "prepare": "husky"
   },
   "keywords": [
@@ -45,12 +45,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vbgate/opencode-mystatus.git"
+    "url": "git+https://github.com/ekworp/opencode-mystatus.git"
   },
   "bugs": {
-    "url": "https://github.com/vbgate/opencode-mystatus/issues"
+    "url": "https://github.com/ekworp/opencode-mystatus/issues"
   },
-  "homepage": "https://github.com/vbgate/opencode-mystatus#readme",
+  "homepage": "https://github.com/ekworp/opencode-mystatus#readme",
   "dependencies": {
     "@opencode/plugin": "2.0.25"
   },
