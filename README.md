@@ -14,10 +14,11 @@ An [OpenCode](https://opencode.ai) plugin to query account quota usage for multi
 
 | Platform     | Account Type      | Data Source                                    |
 | ------------ | ----------------- | ---------------------------------------------- |
-| OpenAI       | Plus / Team / Pro | `~/.local/share/opencode/auth.json`            |
-| Zhipu AI     | Coding Plan       | `~/.local/share/opencode/auth.json`            |
-| Z.ai         | Coding Plan       | `~/.local/share/opencode/auth.json`            |
-| GitHub Copilot | Individual / Business | `~/.local/share/opencode/auth.json`            |
+| OpenAI       | Plus / Team / Pro | `~/.local/share/opencode/opencode.db`         |
+| Zhipu AI     | Coding Plan       | `~/.local/share/opencode/opencode.db`         |
+| Z.ai         | Coding Plan       | `~/.local/share/opencode/opencode.db`         |
+| DeepSeek     | API balance       | `~/.local/share/opencode/opencode.db`         |
+| GitHub Copilot | Individual / Business | `~/.local/share/opencode/opencode.db`      |
 | Google Cloud | Antigravity       | `~/.config/opencode/antigravity-accounts.json` |
 
 ## Installation
@@ -164,8 +165,20 @@ Claude     2d 9h      ░░░░░░░░░░░░░░░░░░░�
 
 No additional configuration required. The plugin automatically reads credentials from:
 
-- **OpenAI, Zhipu AI, Z.ai & GitHub Copilot**: `~/.local/share/opencode/auth.json`
+- **OpenAI, Zhipu AI, Z.ai, DeepSeek & GitHub Copilot**: `~/.local/share/opencode/opencode.db`
 - **Google Cloud**: `~/.config/opencode/antigravity-accounts.json`
+
+### Disable providers
+
+Create `~/.config/opencode/mystatus.json` to skip selected providers:
+
+```json
+{
+  "disabledProviders": ["deepseek", "google"]
+}
+```
+
+Available names: `openai`, `zhipuai-coding-plan`, `zai-coding-plan`, `deepseek`, `google`, `github-copilot`.
 
 ### Google Cloud Setup
 
@@ -177,7 +190,7 @@ This plugin is safe to use:
 
 **Local Files Accessed (read-only):**
 
-- `~/.local/share/opencode/auth.json` - OpenCode's official auth storage
+- `~/.local/share/opencode/opencode.db` - OpenCode V2's official credential storage
 - `~/.config/opencode/antigravity-accounts.json` - Antigravity plugin's account storage
 
 **API Endpoints (all official):**

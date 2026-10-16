@@ -40,6 +40,12 @@ export interface ZhipuAuthData {
   key?: string;
 }
 
+/** DeepSeek API key authentication data */
+export interface DeepSeekAuthData {
+  type: string;
+  key?: string;
+}
+
 /**
  * GitHub Copilot 认证数据
  */
@@ -98,6 +104,7 @@ export interface AntigravityAccountsFile {
  */
 export interface AuthData {
   openai?: OpenAIAuthData;
+  deepseek?: DeepSeekAuthData;
   "zhipuai-coding-plan"?: ZhipuAuthData;
   "zai-coding-plan"?: ZhipuAuthData;
   "github-copilot"?: CopilotAuthData;

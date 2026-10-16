@@ -56,8 +56,8 @@ jobs:
           RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
         run: |
           if [ -z "${NODE_AUTH_TOKEN}" ]; then
-            echo "NPM_TOKEN is not configured"
-            exit 1
+            echo "NPM_TOKEN is not configured; skipping npm publish"
+            exit 0
           fi
           PACKAGE_VERSION=$(node -p "require('./package.json').version")
           if [ "v${PACKAGE_VERSION}" != "${RELEASE_TAG}" ]; then

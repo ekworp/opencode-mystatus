@@ -14,10 +14,11 @@
 
 | 平台         | 账号类型          | 数据来源                                       |
 | ------------ | ----------------- | ---------------------------------------------- |
-| OpenAI       | Plus / Team / Pro | `~/.local/share/opencode/auth.json`            |
-| 智谱 AI      | Coding Plan       | `~/.local/share/opencode/auth.json`            |
-| Z.ai         | Coding Plan       | `~/.local/share/opencode/auth.json`            |
-| GitHub Copilot | Individual / Business | `~/.local/share/opencode/auth.json`            |
+| OpenAI       | Plus / Team / Pro | `~/.local/share/opencode/opencode.db`         |
+| 智谱 AI      | Coding Plan       | `~/.local/share/opencode/opencode.db`         |
+| Z.ai         | Coding Plan       | `~/.local/share/opencode/opencode.db`         |
+| DeepSeek     | API 余额          | `~/.local/share/opencode/opencode.db`         |
+| GitHub Copilot | Individual / Business | `~/.local/share/opencode/opencode.db`      |
 | Google Cloud | Antigravity       | `~/.config/opencode/antigravity-accounts.json` |
 
 ## 安装
@@ -161,10 +162,22 @@ Claude     2d 9h      ░░░░░░░░░░░░░░░░░░░�
 
 ## 配置
 
-无需额外配置。插件自动从以下位置读取认证信息：
+插件自动从以下位置读取认证信息：
 
-- **OpenAI、智谱 AI、Z.ai 和 GitHub Copilot**: `~/.local/share/opencode/auth.json`
+- **OpenAI、智谱 AI、Z.ai、DeepSeek 和 GitHub Copilot**: `~/.local/share/opencode/opencode.db`
 - **Google Cloud**: `~/.config/opencode/antigravity-accounts.json`
+
+### 禁用平台
+
+可创建 `~/.config/opencode/mystatus.json`，过滤不需要查询的平台：
+
+```json
+{
+  "disabledProviders": ["deepseek", "google"]
+}
+```
+
+可用名称：`openai`、`zhipuai-coding-plan`、`zai-coding-plan`、`deepseek`、`google`、`github-copilot`。
 
 ### Google Cloud 设置
 
@@ -176,7 +189,7 @@ Claude     2d 9h      ░░░░░░░░░░░░░░░░░░░�
 
 **读取的本地文件（只读）：**
 
-- `~/.local/share/opencode/auth.json` - OpenCode 官方认证存储
+- `~/.local/share/opencode/opencode.db` - OpenCode V2 官方认证存储
 - `~/.config/opencode/antigravity-accounts.json` - Antigravity 插件的账号存储
 
 **请求的 API 接口（均为官方接口）：**

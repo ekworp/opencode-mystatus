@@ -64,20 +64,21 @@ const translations = {
 
     // 错误信息
     authError: (path: string, err: string) =>
-      `❌ 无法读取认证文件: ${path}\n错误: ${err}`,
+      `❌ 无法读取 OpenCode 凭证数据库: ${path}\n错误: ${err}`,
     apiError: (status: number, text: string) =>
       `OpenAI API 请求失败 (${status}): ${text}`,
     timeoutError: (seconds: number) => `请求超时 (${seconds}秒)`,
     tokenExpired:
       "⚠️ OAuth 授权已过期，请在 OpenCode 中使用一次 OpenAI 模型以刷新授权。",
     noAccounts:
-      "未找到任何已配置的账号。\n\n支持的账号类型:\n- OpenAI (Plus/Team/Pro 订阅用户)\n- 智谱 AI (Coding Plan)\n- Z.ai (Coding Plan)\n- Google Cloud (Antigravity)",
+      "未找到任何已配置的账号。\n\n支持的账号类型:\n- OpenAI (Plus/Team/Pro 订阅用户)\n- 智谱 AI (Coding Plan)\n- Z.ai (Coding Plan)\n- DeepSeek\n- Google Cloud (Antigravity)",
     queryFailed: "❌ 查询失败的账号:\n",
 
     // 平台标题
     openaiTitle: "## OpenAI 账号额度",
     zhipuTitle: "## 智谱 AI 账号额度",
     zaiTitle: "## Z.ai 账号额度",
+    deepseekTitle: "## DeepSeek 账户余额",
 
     // 智谱 AI 相关
     zhipuApiError: (status: number, text: string) =>
@@ -88,6 +89,11 @@ const translations = {
     zhipuMcpLimit: "MCP 月度配额",
     zhipuAccountName: "Coding Plan",
     zaiAccountName: "Z.ai",
+    deepseekApiError: (status: number, text: string) =>
+      `DeepSeek API 请求失败 (${status}): ${text}`,
+    deepseekAccountName: "API 账户",
+    deepseekBalance: "账户余额",
+    deepseekNoBalance: "暂无余额数据",
     noQuotaData: "暂无配额数据",
 
     // Google 相关
@@ -142,20 +148,21 @@ const translations = {
 
     // 错误信息
     authError: (path: string, err: string) =>
-      `❌ Failed to read auth file: ${path}\nError: ${err}`,
+      `❌ Failed to read OpenCode credential database: ${path}\nError: ${err}`,
     apiError: (status: number, text: string) =>
       `OpenAI API request failed (${status}): ${text}`,
     timeoutError: (seconds: number) => `Request timeout (${seconds}s)`,
     tokenExpired:
       "⚠️ OAuth token expired. Please use an OpenAI model in OpenCode to refresh authorization.",
     noAccounts:
-      "No configured accounts found.\n\nSupported account types:\n- OpenAI (Plus/Team/Pro subscribers)\n- Zhipu AI (Coding Plan)\n- Z.ai (Coding Plan)\n- Google Cloud (Antigravity)",
+      "No configured accounts found.\n\nSupported account types:\n- OpenAI (Plus/Team/Pro subscribers)\n- Zhipu AI (Coding Plan)\n- Z.ai (Coding Plan)\n- DeepSeek\n- Google Cloud (Antigravity)",
     queryFailed: "❌ Failed to query accounts:\n",
 
     // 平台标题
     openaiTitle: "## OpenAI Account Quota",
     zhipuTitle: "## Zhipu AI Account Quota",
     zaiTitle: "## Z.ai Account Quota",
+    deepseekTitle: "## DeepSeek Account Balance",
 
     // 智谱 AI 相关
     zhipuApiError: (status: number, text: string) =>
@@ -166,6 +173,11 @@ const translations = {
     zhipuMcpLimit: "MCP monthly quota",
     zhipuAccountName: "Coding Plan",
     zaiAccountName: "Z.ai",
+    deepseekApiError: (status: number, text: string) =>
+      `DeepSeek API request failed (${status}): ${text}`,
+    deepseekAccountName: "API account",
+    deepseekBalance: "Account balance",
+    deepseekNoBalance: "No balance data available",
     noQuotaData: "No quota data available",
 
     // Google 相关

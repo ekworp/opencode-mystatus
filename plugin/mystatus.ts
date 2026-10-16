@@ -1,21 +1,27 @@
 /**
  * OpenCode 额度状态查询插件
  *
- * [输入]: ~/.local/share/opencode/auth.json 和 ~/.config/opencode/antigravity-accounts.json 中的认证信息
+ * [输入]: OpenCode V2 SQLite 凭证和 ~/.config/opencode/antigravity-accounts.json 中的认证信息
  * [输出]: 带进度条的额度使用情况展示
  * [定位]: 通过 mystatus 工具查询各账号额度
- * [同步]: lib/openai.ts, lib/zhipu.ts, lib/google.ts, lib/types.ts, lib/i18n.ts
+ * [同步]: lib/openai.ts, lib/zhipu.ts, lib/deepseek.ts, lib/google.ts, lib/types.ts, lib/i18n.ts
  */
 
-import { readFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { Plugin } from "@opencode/plugin";
+import {
+  isProviderEnabled,
+  type ProviderId,
+  readMystatusConfig,
+} from "./lib/config";
 import { queryCopilotUsage } from "./lib/copilot";
+import { queryDeepSeekUsage } from "./lib/deepseek";
 import { queryGoogleUsage } from "./lib/google";
 import { t } from "./lib/i18n";
 import { queryOpenAIUsage } from "./lib/openai";
-import type { AuthData, QueryResult } from "./lib/types";
+import { readV2AuthData } from "./lib/opencode-auth";
+import type { QueryResult } from "./lib/types";
 import { queryZaiUsage, queryZhipuUsage } from "./lib/zhipu";
 
 // ============================================================================
@@ -29,25 +35,46 @@ export default Plugin.define({
       editor.add({
         name: "mystatus",
         description:
-          "Query account quota usage for all configured AI platforms. Returns remaining quota percentages, usage stats, and reset countdowns with visual progress bars. Currently supports OpenAI (ChatGPT/Codex), Zhipu AI, Z.ai, Google Antigravity, and GitHub Copilot.",
+          "Query account quota usage for all configured AI platforms. Returns remaining quota percentages, usage stats, balances, and reset countdowns. Currently supports OpenAI (ChatGPT/Codex), Zhipu AI, Z.ai, DeepSeek, Google Antigravity, and GitHub Copilot.",
         input: {
           type: "object",
           properties: {},
           additionalProperties: false,
         },
         async execute() {
-          // 1. 读取 auth.json
-          const authPath = join(homedir(), ".local/share/opencode/auth.json");
-          let authData: AuthData;
+          // V2 stores credentials and refreshed OAuth tokens in SQLite.
+          const databasePath = join(
+            homedir(),
+            ".local/share/opencode/opencode.db",
+          );
+          const disabledProviders = await readMystatusConfig();
+          const authData = await readV2AuthData(
+            databasePath,
+            disabledProviders,
+          );
 
-          try {
-            const content = await readFile(authPath, "utf-8");
-            authData = JSON.parse(content);
-          } catch (err) {
+          const providers: ProviderId[] = [
+            "openai",
+            "zhipuai-coding-plan",
+            "zai-coding-plan",
+            "deepseek",
+            "google",
+            "github-copilot",
+          ];
+          const hasEnabledProvider = providers.some((provider) =>
+            isProviderEnabled(disabledProviders, provider),
+          );
+
+          if (!hasEnabledProvider) return { content: t.noAccounts };
+
+          if (
+            Object.keys(authData).length === 0 &&
+            !isProviderEnabled(disabledProviders, "google")
+          ) {
             return {
               content: t.authError(
-                authPath,
-                err instanceof Error ? err.message : String(err),
+                databasePath,
+                "OpenCode V2 credentials were not found in the credential table",
               ),
             };
           }
@@ -57,14 +84,28 @@ export default Plugin.define({
             openaiResult,
             zhipuResult,
             zaiResult,
+            deepseekResult,
             googleResult,
             copilotResult,
           ] = await Promise.all([
-            queryOpenAIUsage(authData.openai),
-            queryZhipuUsage(authData["zhipuai-coding-plan"]),
-            queryZaiUsage(authData["zai-coding-plan"]),
-            queryGoogleUsage(),
-            queryCopilotUsage(authData["github-copilot"]),
+            isProviderEnabled(disabledProviders, "openai")
+              ? queryOpenAIUsage(authData.openai)
+              : null,
+            isProviderEnabled(disabledProviders, "zhipuai-coding-plan")
+              ? queryZhipuUsage(authData["zhipuai-coding-plan"])
+              : null,
+            isProviderEnabled(disabledProviders, "zai-coding-plan")
+              ? queryZaiUsage(authData["zai-coding-plan"])
+              : null,
+            isProviderEnabled(disabledProviders, "deepseek")
+              ? queryDeepSeekUsage(authData.deepseek)
+              : null,
+            isProviderEnabled(disabledProviders, "google")
+              ? queryGoogleUsage()
+              : null,
+            isProviderEnabled(disabledProviders, "github-copilot")
+              ? queryCopilotUsage(authData["github-copilot"])
+              : null,
           ]);
 
           // 3. 收集结果
@@ -79,6 +120,9 @@ export default Plugin.define({
 
           // 处理 Z.ai 结果
           collectResult(zaiResult, t.zaiTitle, results, errors);
+
+          // 处理 DeepSeek 结果
+          collectResult(deepseekResult, t.deepseekTitle, results, errors);
 
           // 处理 Google 结果
           collectResult(googleResult, t.googleTitle, results, errors);

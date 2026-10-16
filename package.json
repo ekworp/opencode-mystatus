@@ -1,6 +1,6 @@
 {
   "name": "@ekworp/opencode-mystatus",
-  "version": "1.2.7",
+  "version": "1.2.8",
   "description": "Check all your AI subscription quotas in one command. Supports OpenAI, Zhipu AI, Z.ai, and Google Antigravity. More platforms coming soon.",
   "type": "module",
   "main": "dist/plugin/mystatus.js",
@@ -19,12 +19,13 @@
   ],
   "scripts": {
     "build": "tsc",
+    "test": "pnpm build && node --loader ./tests/extension-loader.mjs --test tests/*.test.js",
     "typecheck": "tsc --noEmit",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "format": "biome format --write .",
     "prepublishOnly": "pnpm run lint && pnpm run build",
-    "publish": "pnpm publish --access public --registry=https://registry.npmjs.org",
+    "publish:npm": "pnpm publish --access public --registry=https://registry.npmjs.org",
     "prepare": "husky"
   },
   "keywords": [
