@@ -58,7 +58,9 @@ function formatBalance(data: BalanceResponse, apiKey: string): string {
 export async function queryDeepSeekUsage(
   authData: DeepSeekAuthData | undefined,
 ): Promise<QueryResult | null> {
-  if (authData?.type !== "api" || !authData.key) return null;
+  // OpenCode stores API-key credentials with type "key" in V2.
+  // Keep accepting the older "api" shape for compatibility.
+  if (!authData?.key || !["key", "api"].includes(authData.type)) return null;
 
   try {
     const balance = await fetchBalance(authData.key);

@@ -25,7 +25,7 @@ test("queries and formats DeepSeek balance", async () => {
   };
 
   try {
-    const result = await queryDeepSeekUsage({ type: "api", key: "sk-secret" });
+    const result = await queryDeepSeekUsage({ type: "key", key: "sk-secret" });
     assert.equal(result.success, true);
     assert.match(result.output, /12\.34 USD/);
     assert.equal(request.url, "https://api.deepseek.com/user/balance");
