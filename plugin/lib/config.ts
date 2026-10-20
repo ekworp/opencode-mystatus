@@ -13,11 +13,15 @@ export type ProviderId =
 interface MystatusConfigFile {
   disabledProviders?: unknown;
   useOpenCodeProxy?: unknown;
+  language?: unknown;
 }
+
+export type LanguagePreference = "auto" | "zh" | "en";
 
 export interface MystatusConfig {
   disabledProviders: Set<ProviderId>;
   useOpenCodeProxy: boolean;
+  language: LanguagePreference;
 }
 
 const CONFIG_PATH = join(homedir(), ".config/opencode/mystatus.json");
@@ -27,10 +31,16 @@ export async function readMystatusConfig(): Promise<MystatusConfig> {
   try {
     const content = await readFile(CONFIG_PATH, "utf8");
     const config = JSON.parse(content) as MystatusConfigFile;
+    const language: LanguagePreference = ["auto", "zh", "en"].includes(
+      config.language as string,
+    )
+      ? (config.language as LanguagePreference)
+      : "auto";
     if (!Array.isArray(config.disabledProviders)) {
       return {
         disabledProviders: new Set(),
         useOpenCodeProxy: config.useOpenCodeProxy !== false,
+        language,
       };
     }
 
@@ -49,9 +59,14 @@ export async function readMystatusConfig(): Promise<MystatusConfig> {
         ),
       ),
       useOpenCodeProxy: config.useOpenCodeProxy !== false,
+      language,
     };
   } catch {
-    return { disabledProviders: new Set(), useOpenCodeProxy: true };
+    return {
+      disabledProviders: new Set(),
+      useOpenCodeProxy: true,
+      language: "auto",
+    };
   }
 }
 

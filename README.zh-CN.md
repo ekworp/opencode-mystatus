@@ -174,12 +174,14 @@ Claude     2d 9h      ░░░░░░░░░░░░░░░░░░░�
 ```json
 {
   "disabledProviders": ["deepseek", "google"],
-  "useOpenCodeProxy": true
+  "useOpenCodeProxy": true,
+  "language": "auto"
 }
 ```
 
 可用名称：`openai`、`zhipuai-coding-plan`、`zai-coding-plan`、`deepseek`、`google`、`github-copilot`。
 `useOpenCodeProxy` 默认为 `true`，会使用 OpenCode 服务配置的代理环境变量。
+`language` 默认为 `auto`，也可以设置为 `zh` 或 `en` 强制使用中文或英文。
 
 ### Google Cloud 设置
 

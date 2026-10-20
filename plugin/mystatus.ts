@@ -18,7 +18,7 @@ import {
 import { queryCopilotUsage } from "./lib/copilot";
 import { queryDeepSeekUsage } from "./lib/deepseek";
 import { queryGoogleUsage } from "./lib/google";
-import { t } from "./lib/i18n";
+import { initializeLanguage, t } from "./lib/i18n";
 import { queryOpenAIUsage } from "./lib/openai";
 import { readV2AuthData } from "./lib/opencode-auth";
 import type { QueryResult } from "./lib/types";
@@ -50,6 +50,7 @@ export default Plugin.define({
           );
           const config = await readMystatusConfig();
           const { disabledProviders } = config;
+          initializeLanguage(config.language);
           configureOpenCodeProxy(config.useOpenCodeProxy);
           const authData = await readV2AuthData(
             databasePath,

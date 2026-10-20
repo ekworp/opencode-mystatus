@@ -50,6 +50,12 @@ function formatBalance(data: BalanceResponse, apiKey: string): string {
     lines.push(
       `${t.deepseekBalance}: ${balance.total_balance} ${balance.currency}`,
     );
+    lines.push(
+      `${t.deepseekGrantedBalance}: ${balance.granted_balance} ${balance.currency}`,
+    );
+    lines.push(
+      `${t.deepseekToppedUpBalance}: ${balance.topped_up_balance} ${balance.currency}`,
+    );
   }
 
   return lines.join("\n");

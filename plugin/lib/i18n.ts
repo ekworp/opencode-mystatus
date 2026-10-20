@@ -21,21 +21,40 @@ export type Language = "zh" | "en";
  * 检测用户系统语言
  * 优先使用 Intl API，回退到环境变量，默认英文
  */
-function detectLanguage(): Language {
-  // 1. 优先使用 Intl API（更可靠）
+export function detectLanguage(
+  preference: "auto" | Language = "auto",
+): Language {
+  // 1. Respect an explicit plugin setting.
+  if (preference !== "auto") return preference;
+
+  // 2. OpenCode may expose its UI locale through one of these environment
+  // variables. The plugin API does not currently expose the UI locale directly.
+  const openCodeLocale =
+    process.env.OPENCODE_LOCALE ||
+    process.env.OPENCODE_LANGUAGE ||
+    process.env.OPENCODE_LANG;
+  if (openCodeLocale?.toLowerCase().startsWith("zh")) return "zh";
+  if (openCodeLocale) return "en";
+
+  // 3. Follow the standard locale environment-variable precedence.
+  const lang =
+    process.env.LC_ALL ||
+    process.env.LC_MESSAGES ||
+    process.env.LANG ||
+    process.env.LANGUAGE ||
+    "";
+  if (lang.toLowerCase().startsWith("zh")) return "zh";
+  if (lang) return "en";
+
+  // 4. Use the Node.js runtime locale as a final signal.
   try {
     const intlLocale = Intl.DateTimeFormat().resolvedOptions().locale;
-    if (intlLocale.startsWith("zh")) return "zh";
+    if (intlLocale.toLowerCase().startsWith("zh")) return "zh";
   } catch {
-    // Intl API 不可用，继续尝试环境变量
+    // Intl API unavailable.
   }
 
-  // 2. 回退到环境变量
-  const lang =
-    process.env.LANG || process.env.LC_ALL || process.env.LANGUAGE || "";
-  if (lang.startsWith("zh")) return "zh";
-
-  // 3. 默认英文
+  // 5. Default to English.
   return "en";
 }
 
@@ -93,6 +112,8 @@ const translations = {
       `DeepSeek API 请求失败 (${status}): ${text}`,
     deepseekAccountName: "API 账户",
     deepseekBalance: "账户余额",
+    deepseekGrantedBalance: "赠送余额",
+    deepseekToppedUpBalance: "充值余额",
     deepseekNoBalance: "暂无余额数据",
     noQuotaData: "暂无配额数据",
 
@@ -177,6 +198,8 @@ const translations = {
       `DeepSeek API request failed (${status}): ${text}`,
     deepseekAccountName: "API account",
     deepseekBalance: "Account balance",
+    deepseekGrantedBalance: "Granted balance",
+    deepseekToppedUpBalance: "Topped-up balance",
     deepseekNoBalance: "No balance data available",
     noQuotaData: "No quota data available",
 
@@ -218,8 +241,13 @@ const translations = {
 // 导出
 // ============================================================================
 
-/** 当前语言（模块加载时检测一次） */
-export const currentLang = detectLanguage();
+/** Current language, initialized from the plugin config before each query. */
+export let currentLang: Language = "en";
 
 /** 翻译函数 */
-export const t = translations[currentLang];
+export let t: (typeof translations)[Language] = translations[currentLang];
+
+export function initializeLanguage(preference: "auto" | Language): void {
+  currentLang = detectLanguage(preference);
+  t = translations[currentLang];
+}

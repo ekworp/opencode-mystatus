@@ -175,12 +175,14 @@ Create `~/.config/opencode/mystatus.json` to skip selected providers:
 ```json
 {
   "disabledProviders": ["deepseek", "google"],
-  "useOpenCodeProxy": true
+  "useOpenCodeProxy": true,
+  "language": "auto"
 }
 ```
 
 Available names: `openai`, `zhipuai-coding-plan`, `zai-coding-plan`, `deepseek`, `google`, `github-copilot`.
 `useOpenCodeProxy` defaults to `true` and uses the proxy environment configured for the OpenCode service.
+`language` defaults to `auto`; set it to `zh` or `en` to force Chinese or English output.
 
 ### Google Cloud Setup
 

@@ -28,6 +28,8 @@ test("queries and formats DeepSeek balance", async () => {
     const result = await queryDeepSeekUsage({ type: "key", key: "sk-secret" });
     assert.equal(result.success, true);
     assert.match(result.output, /12\.34 USD/);
+    assert.match(result.output, /Granted balance: 2\.34 USD/);
+    assert.match(result.output, /Topped-up balance: 10\.00 USD/);
     assert.equal(request.url, "https://api.deepseek.com/user/balance");
     assert.equal(request.options.headers.Authorization, "Bearer sk-secret");
     assert.doesNotMatch(result.output, /sk-secret/);
